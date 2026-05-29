@@ -1,0 +1,50 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Physician {
+  id                  String   @id @default(uuid())
+  npi                 String   @unique
+  firstName           String
+  lastName            String
+  specialty           String
+  subSpecialty        String?
+  affiliation         String
+  city                String
+  state               String
+  email               String   @unique
+  npiRegistrationYear Int
+  acceptingPatients   Boolean
+  boardCertified      Boolean
+}
+
+model Campaign {
+  id                   String         @id @default(uuid())
+  name                 String
+  type                 String
+  status               String         @default("draft")
+  createdAt            DateTime       @default(now())
+  enrolledPhysicianIds String
+  sequences            SequenceStep[]
+}
+
+model SequenceStep {
+  id              String   @id @default(uuid())
+  campaignId      String
+  campaign        Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  stepNumber      Int
+  delayDays       Int
+  subjectTemplate String
+  bodyTemplate    String
+}
