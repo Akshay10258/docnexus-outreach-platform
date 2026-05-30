@@ -27,3 +27,14 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(campaign, { status: 201 });
 }
+
+export async function GET() {
+    const campaigns = await prisma.campaign.findMany({
+        orderBy: { createdAt: "desc" },
+        include: { sequences: true },
+    });
+    return NextResponse.json(campaigns.map((c) => ({
+        ...c,
+        enrolledPhysicianIds: c.enrolledPhysicianIds ? c.enrolledPhysicianIds.split(",") : [],
+    })));
+}
