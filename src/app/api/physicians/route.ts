@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
         ...(specialty && { specialty }),
         ...(state && { state }),
         ...(affiliation && { affiliation }),
-        ...(npiYear && { npiRegistrationYear: parseInt(npiYear) }),
+        ...(npiYear && { npiRegistrationYear: { gte: parseInt(npiYear) } }),
         },
     });
 
