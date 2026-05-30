@@ -4,10 +4,11 @@ import { prisma } from "@/lib/prisma";
 // this file handles API requests to /api/campaigns/[id], allowing for retrieving campaign details with GET
 export async function GET(
     req: NextRequest,
-    { params }: { params: { id: string } }
+    context: { params: Promise<{ id: string }> }
     ) {
+    const { id } = await context.params;
     const campaign = await prisma.campaign.findUnique({
-        where: { id: params.id },
+        where: { id },
         include: { sequences: true },
     });
 
