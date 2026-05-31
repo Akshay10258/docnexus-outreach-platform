@@ -15,8 +15,9 @@ function seededRandom(seed: number) {
     return x - Math.floor(x);
 }
 
-function getMockContactStatus(physicianId: string, campaignStatus: string): ContactStatus {
+function getMockContactStatus(physicianId: string, campaignStatus: string, isRecentlyLaunched?: boolean): ContactStatus {
     if (campaignStatus === "draft") return "Pending";
+    if (isRecentlyLaunched) return "Contacted";
     const r = seededRandom(physicianId.charCodeAt(0) + physicianId.charCodeAt(1));
     if (campaignStatus === "active") {
         if (r < 0.5) return "Contacted";
@@ -33,13 +34,14 @@ interface Props {
     physicians: Physician[];
     enrolled: number;
     campaignStatus: string;
+    isRecentlyLaunched?: boolean;
     onBrowse: () => void;
 }
 
-export default function EnrolledTable({ physicians, enrolled, campaignStatus, onBrowse }: Props) {
+export default function EnrolledTable({ physicians, enrolled, campaignStatus, isRecentlyLaunched, onBrowse }: Props) {
   // contact status summary counts
   const counts = physicians.reduce((acc, p) => {
-    const s = getMockContactStatus(p.id, campaignStatus);
+    const s = getMockContactStatus(p.id, campaignStatus, isRecentlyLaunched);
     acc[s] = (acc[s] ?? 0) + 1;
     return acc;
   }, {} as Record<ContactStatus, number>);
@@ -101,7 +103,7 @@ export default function EnrolledTable({ physicians, enrolled, campaignStatus, on
               </thead>
               <tbody>
                 {physicians.map((p, i) => {
-                  const status = getMockContactStatus(p.id, campaignStatus);
+                  const status = getMockContactStatus(p.id, campaignStatus, isRecentlyLaunched);
                   const colors = STATUS_COLORS[status];
                   return (
                     <tr key={p.id} style={{

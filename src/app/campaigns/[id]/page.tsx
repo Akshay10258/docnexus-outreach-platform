@@ -59,15 +59,20 @@ export default function CampaignDashboardPage() {
   if (!campaign) return null;
 
   const enrolled = campaign.enrolledPhysicianIds?.length ?? 0;
+  
+  // Calculate if this was created very recently (within the last 2 hours).
+  const hoursSinceCreation = (Date.now() - new Date(campaign.createdAt).getTime()) / (1000 * 60 * 60);
+  const isRecentlyLaunched = campaign.status === "active" && hoursSinceCreation < 2;
+
   const mockMetrics = {
     enrolled,
-    sent: campaign.status === "draft" ? 0 : Math.round(enrolled * 1.8),
-    openRate: campaign.status === "draft" ? 0 : 42,
-    replies: campaign.status === "draft" ? 0 : Math.round(enrolled * 0.3),
-    meetings: campaign.status === "draft" ? 0 : Math.round(enrolled * 0.08),
+    sent: campaign.status === "draft" ? 0 : (isRecentlyLaunched ? enrolled : Math.round(enrolled * 1.8)),
+    openRate: campaign.status === "draft" ? 0 : (isRecentlyLaunched ? 0 : 42),
+    replies: campaign.status === "draft" ? 0 : (isRecentlyLaunched ? 0 : Math.round(enrolled * 0.3)),
+    meetings: campaign.status === "draft" ? 0 : (isRecentlyLaunched ? 0 : Math.round(enrolled * 0.08)),
   };
 
-  const chartData = campaign.status === "draft"
+  const chartData = campaign.status === "draft" || isRecentlyLaunched
     ? [0, 0, 0, 0, 0, 0, 0]
     : [0.2, 0.4, 0.6, 0.5, 0.3, 0.15, 0.1].map((r) => Math.round(enrolled * r));
 
@@ -89,6 +94,7 @@ export default function CampaignDashboardPage() {
         <EnrolledTable
           physicians={physicians} enrolled={enrolled}
           campaignStatus={campaign.status}
+          isRecentlyLaunched={isRecentlyLaunched}
           onBrowse={() => router.push("/physicians")}
         />
         <p style={{ fontSize: 12, color: "var(--color-text-tertiary)", textAlign: "center" }}>
