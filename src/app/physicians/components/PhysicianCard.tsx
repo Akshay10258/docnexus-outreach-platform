@@ -44,7 +44,7 @@ function PhysicianCard({ physician: p, isSelected, onToggle }: Props) {
                 Dr. {p.firstName} {p.lastName}
             </span>
             {p.boardCertified && <Badge color="#0F6E56" bg="#E1F5EE">Board Certified</Badge>}
-            {!p.acceptingPatients && <Badge color="#854F0B" bg="#FAEEDA">Not Accepting</Badge>}
+            {!p.acceptingPatients && <Badge color="#A32D2D" bg="#FDE8E8">Not Accepting</Badge>}
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 3, flexWrap: "wrap" }}>
             <Badge color={color} bg={bg}>{p.specialty}</Badge>
@@ -54,7 +54,7 @@ function PhysicianCard({ physician: p, isSelected, onToggle }: Props) {
             </div>
         </div>
 
-        <div style={{ minWidth: 160, maxWidth: 200 }}>
+        <div style={{ width: 180, flexShrink: 0 }}>
             <p style={{ fontSize: 13, color: "var(--color-text-secondary)", margin: 0, fontWeight: 500 }}>
             {p.affiliation}
             </p>
@@ -63,12 +63,20 @@ function PhysicianCard({ physician: p, isSelected, onToggle }: Props) {
             </p>
         </div>
 
-        <div style={{ textAlign: "right", minWidth: 80 }}>
+        <div style={{ width: 180, flexShrink: 0, display: "flex", justifyContent: "center", alignItems: "center" }}>
+            {p.activeCampaignCount ? (
+                <span style={{ fontSize: 12, fontWeight: 500, padding: "4px 10px", borderRadius: 6, background: "#FAEEDA", color: "#854F0B", border: "0.5px solid #E5C392", whiteSpace: "nowrap" }}>
+                    ⚠️ Active in {p.activeCampaignCount} Campaign{p.activeCampaignCount > 1 ? "s" : ""}
+                </span>
+            ) : null}
+        </div>
+
+        <div style={{ textAlign: "right", width: 80, flexShrink: 0 }}>
             <p style={{ fontSize: 14, fontWeight: 500, color: "var(--color-text-primary)", margin: 0 }}>{exp} yrs</p>
             <p style={{ fontSize: 12, color: "var(--color-text-tertiary)", margin: "2px 0 0" }}>experience</p>
         </div>
 
-        <div style={{ textAlign: "right", minWidth: 100 }}>
+        <div style={{ textAlign: "right", width: 90, flexShrink: 0 }}>
             <p style={{ fontSize: 11, color: "var(--color-text-tertiary)", margin: 0, letterSpacing: "0.04em" }}>NPI</p>
             <p style={{ fontSize: 13, fontWeight: 500, color: "var(--color-text-secondary)",
             margin: "2px 0 0", fontFamily: "var(--font-mono)" }}>{p.npi}</p>

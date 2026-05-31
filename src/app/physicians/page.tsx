@@ -134,6 +134,7 @@ export default function PhysiciansPage() {
             <SaveCampaignModal
             selectedCount={selected.size}
             selectedIds={Array.from(selected)}
+            activeWarningCount={Array.from(selected).filter(id => (physicians.find(p => p.id === id)?.activeCampaignCount || 0) > 0).length}
             onClose={() => setShowSaveModal(false)}
             onSuccess={handleCampaignSuccess}
             />

@@ -4,11 +4,12 @@ import { DEFAULT_SEQUENCES } from "@/app/constants/campaigns";
 interface Props {
     selectedCount: number;
     selectedIds: string[];
+    activeWarningCount: number;
     onClose: () => void;
     onSuccess: (campaignId: string) => void;
 }
 
-export default function SaveCampaignModal({ selectedCount, selectedIds, onClose, onSuccess }: Props) {
+export default function SaveCampaignModal({ selectedCount, selectedIds, activeWarningCount, onClose, onSuccess }: Props) {
     const [campaignName, setCampaignName] = useState("");
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -69,6 +70,14 @@ export default function SaveCampaignModal({ selectedCount, selectedIds, onClose,
             <strong style={{ fontWeight: 500 }}>{selectedCount}</strong>{" "}
             physician{selectedCount !== 1 ? "s" : ""}.
             </p>
+
+            {activeWarningCount > 0 && (
+                <div style={{ padding: "10px 14px", background: "#FAEEDA", borderRadius: "var(--border-radius-md)", marginBottom: 16, border: "0.5px solid #E5C392" }}>
+                    <p style={{ fontSize: 13, color: "#854F0B", margin: 0, fontWeight: 500 }}>
+                        ⚠️ <strong>Warning:</strong> {activeWarningCount} selected physician{activeWarningCount !== 1 ? "s are" : " is"} already enrolled in an active campaign. Proceed with caution.
+                    </p>
+                </div>
+            )}
 
             <label htmlFor="campaign-name" style={{ fontSize: 13, color: "var(--color-text-tertiary)",
             display: "block", marginBottom: 6, fontWeight: 500 }}>

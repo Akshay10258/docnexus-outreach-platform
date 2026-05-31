@@ -12,12 +12,33 @@ export async function GET(req: NextRequest) {
 
     const physicians = await prisma.physician.findMany({
         where: {
-        ...(specialty && { specialty }),
-        ...(state && { state }),
-        ...(affiliation && { affiliation }),
-        ...(npiYear && { npiRegistrationYear: { gte: parseInt(npiYear) } }),
+            ...(specialty && { specialty }),
+            ...(state && { state }),
+            ...(affiliation && { affiliation }),
+            ...(npiYear && { npiRegistrationYear: { gte: parseInt(npiYear) } }),
         },
     });
 
-    return NextResponse.json(physicians);
+    // Fetch active campaigns to map enrollment
+    const campaigns = await prisma.campaign.findMany({
+        where: { status: "active" },
+        select: { enrolledPhysicianIds: true },
+    });
+
+    // Build a map of physicianId -> count of active campaigns
+    const enrollmentCounts: Record<string, number> = {};
+    campaigns.forEach((c) => {
+        if (!c.enrolledPhysicianIds) return;
+        const ids = c.enrolledPhysicianIds.split(",");
+        ids.forEach((id) => {
+            enrollmentCounts[id] = (enrollmentCounts[id] || 0) + 1;
+        });
+    });
+
+    const physiciansWithCounts = physicians.map((p) => ({
+        ...p,
+        activeCampaignCount: enrollmentCounts[p.id] || 0,
+    }));
+
+    return NextResponse.json(physiciansWithCounts);
 }

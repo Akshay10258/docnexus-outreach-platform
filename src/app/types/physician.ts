@@ -12,6 +12,7 @@ export interface Physician {
     npiRegistrationYear: number;
     acceptingPatients: boolean;
     boardCertified: boolean;
+    activeCampaignCount?: number;
 }
 
 export interface PhysicianFilters {
