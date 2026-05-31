@@ -1,9 +1,20 @@
+import { useState } from "react";
 import { TEMPLATE_VARIABLES } from "@/app/constants/campaigns";
 import type { SequenceStep } from "@/app/types/campaign";
+
+export interface AIPhysician {
+  name: string;
+  specialty: string;
+  affiliation: string;
+  city: string;
+}
 
 interface Props {
   steps: SequenceStep[];
   activeField: string | null;
+  campaignName: string;
+  campaignType: string;
+  physician?: AIPhysician;
   onStepChange: (i: number, s: SequenceStep) => void;
   onAddStep: () => void;
   onRemoveStep: (i: number) => void;
@@ -11,7 +22,7 @@ interface Props {
 }
 
 export default function SequenceBuilder({
-  steps, activeField, onStepChange, onAddStep, onRemoveStep, onActiveFieldChange,
+  steps, activeField, campaignName, campaignType, physician, onStepChange, onAddStep, onRemoveStep, onActiveFieldChange,
 }: Props) {
   return (
     <div>
@@ -37,6 +48,9 @@ export default function SequenceBuilder({
             <StepEditor
               step={step} index={i} total={steps.length}
               activeField={activeField}
+              campaignName={campaignName}
+              campaignType={campaignType}
+              physician={physician}
               onChange={(s) => onStepChange(i, s)}
               onRemove={() => onRemoveStep(i)}
               onActiveFieldChange={onActiveFieldChange}
@@ -63,16 +77,51 @@ export default function SequenceBuilder({
 }
 
 // co-located — only used inside SequenceBuilder
-function StepEditor({ step, index, total, activeField, onChange, onRemove, onActiveFieldChange }: {
+function StepEditor({ step, index, total, activeField, campaignName, campaignType, physician, onChange, onRemove, onActiveFieldChange }: {
   step: SequenceStep; index: number; total: number;
   activeField: string | null;
+  campaignName: string;
+  campaignType: string;
+  physician?: AIPhysician;
   onChange: (s: SequenceStep) => void;
   onRemove: () => void;
   onActiveFieldChange: (f: string | null) => void;
 }) {
+  const [generating, setGenerating] = useState(false);
+  const [aiError, setAiError] = useState("");
+
   const insertVar = (varKey: string) => {
     const field = activeField === `${index}-subject` ? "subjectTemplate" : "bodyTemplate";
     onChange({ ...step, [field]: step[field] + varKey });
+  };
+
+  const handleGenerate = async () => {
+    setGenerating(true);
+    setAiError("");
+    try {
+      const res = await fetch("/api/generate-mail", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          campaignName: campaignName || "Healthcare Outreach",
+          campaignType,
+          stepNumber: index + 1,
+          physician: physician || {
+            name: "Sarah Johnson",
+            specialty: "Oncology",
+            affiliation: "Mayo Clinic",
+            city: "Rochester",
+          },
+        }),
+      });
+      if (!res.ok) throw new Error("Failed");
+      const data = await res.json();
+      onChange({ ...step, subjectTemplate: data.subjectTemplate, bodyTemplate: data.bodyTemplate });
+    } catch {
+      setAiError("AI generation failed. Please try again.");
+    } finally {
+      setGenerating(false);
+    }
   };
 
   return (
@@ -156,20 +205,45 @@ function StepEditor({ step, index, total, activeField, onChange, onRemove, onAct
             }} />
         </div>
 
-        <div>
-          <span style={{ fontSize: 12, color: "var(--color-text-tertiary)", fontWeight: 500 }}>INSERT:</span>
-          <div style={{ display: "inline-flex", flexWrap: "wrap", gap: 6, marginTop: 4, marginLeft: 8 }}>
-            {TEMPLATE_VARIABLES.map((v) => (
-              <button key={v} onClick={() => insertVar(v)} style={{
-                padding: "3px 10px", fontSize: 12, fontWeight: 500, borderRadius: 99,
-                background: "#E1F5EE", color: "#0F6E56", border: "0.5px solid #9FE1CB",
-                cursor: "pointer", fontFamily: "var(--font-mono)",
-              }}>
-                {v}
-              </button>
-            ))}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8 }}>
+          <div>
+            <span style={{ fontSize: 12, color: "var(--color-text-tertiary)", fontWeight: 500 }}>INSERT:</span>
+            <div style={{ display: "inline-flex", flexWrap: "wrap", gap: 6, marginTop: 4, marginLeft: 8 }}>
+              {TEMPLATE_VARIABLES.map((v) => (
+                <button key={v} onClick={() => insertVar(v)} style={{
+                  padding: "3px 10px", fontSize: 12, fontWeight: 500, borderRadius: 99,
+                  background: "#E1F5EE", color: "#0F6E56", border: "0.5px solid #9FE1CB",
+                  cursor: "pointer", fontFamily: "var(--font-mono)",
+                }}>
+                  {v}
+                </button>
+              ))}
+            </div>
           </div>
+          <button onClick={handleGenerate} disabled={generating} style={{
+            padding: "6px 14px", fontSize: 12, fontWeight: 600, borderRadius: 99,
+            background: generating ? "var(--color-background-secondary)" : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            color: generating ? "var(--color-text-tertiary)" : "white",
+            border: "none", cursor: generating ? "not-allowed" : "pointer",
+            display: "flex", alignItems: "center", gap: 6,
+            transition: "all 0.2s", opacity: generating ? 0.7 : 1,
+          }}>
+            {generating ? (
+              <>
+                <span style={{ display: "inline-block", width: 12, height: 12, border: "2px solid #ccc",
+                  borderTop: "2px solid #764ba2", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+                Generating…
+              </>
+            ) : (
+              <>
+                ✨ Generate with AI
+              </>
+            )}
+          </button>
         </div>
+        {aiError && (
+          <p style={{ fontSize: 12, color: "#E24B4A", margin: "4px 0 0" }}>{aiError}</p>
+        )}
       </div>
     </div>
   );

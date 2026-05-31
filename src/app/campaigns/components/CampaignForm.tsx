@@ -3,12 +3,21 @@ import { CAMPAIGN_TYPES } from "@/app/constants/campaigns";
 interface Props {
   name: string;
   type: string;
+  senderName: string;
+  senderTitle: string;
+  senderCompany: string;
   error: string;
   onNameChange: (v: string) => void;
   onTypeChange: (v: string) => void;
+  onSenderNameChange: (v: string) => void;
+  onSenderTitleChange: (v: string) => void;
+  onSenderCompanyChange: (v: string) => void;
 }
 
-export default function CampaignForm({ name, type, error, onNameChange, onTypeChange }: Props) {
+export default function CampaignForm({ 
+  name, type, senderName, senderTitle, senderCompany, error, 
+  onNameChange, onTypeChange, onSenderNameChange, onSenderTitleChange, onSenderCompanyChange 
+}: Props) {
   return (
     <div style={{
       background: "var(--color-background-primary)",
@@ -34,6 +43,48 @@ export default function CampaignForm({ name, type, error, onNameChange, onTypeCh
               boxSizing: "border-box", outline: "none",
             }} />
           {error && <p style={{ fontSize: 12, color: "#E24B4A", margin: "4px 0 0" }}>{error}</p>}
+        </div>
+
+        <div style={{ display: "flex", gap: 12 }}>
+          <div style={{ flex: 1 }}>
+            <label style={labelStyle}>YOUR NAME (SENDER)</label>
+            <input type="text" value={senderName}
+              onChange={(e) => onSenderNameChange(e.target.value)}
+              placeholder="e.g. Akshay Achar"
+              style={{
+                width: "100%", padding: "9px 12px", borderRadius: "var(--border-radius-md)",
+                border: "0.5px solid var(--color-border-secondary)",
+                background: "var(--color-background-secondary)",
+                color: "var(--color-text-primary)", fontSize: 14,
+                boxSizing: "border-box", outline: "none",
+              }} />
+          </div>
+          <div style={{ flex: 1 }}>
+            <label style={labelStyle}>YOUR TITLE</label>
+            <input type="text" value={senderTitle}
+              onChange={(e) => onSenderTitleChange(e.target.value)}
+              placeholder="e.g. Medical Science Liaison"
+              style={{
+                width: "100%", padding: "9px 12px", borderRadius: "var(--border-radius-md)",
+                border: "0.5px solid var(--color-border-secondary)",
+                background: "var(--color-background-secondary)",
+                color: "var(--color-text-primary)", fontSize: 14,
+                boxSizing: "border-box", outline: "none",
+              }} />
+          </div>
+          <div style={{ flex: 1 }}>
+            <label style={labelStyle}>YOUR COMPANY</label>
+            <input type="text" value={senderCompany}
+              onChange={(e) => onSenderCompanyChange(e.target.value)}
+              placeholder="e.g. Pfizer"
+              style={{
+                width: "100%", padding: "9px 12px", borderRadius: "var(--border-radius-md)",
+                border: "0.5px solid var(--color-border-secondary)",
+                background: "var(--color-background-secondary)",
+                color: "var(--color-text-primary)", fontSize: 14,
+                boxSizing: "border-box", outline: "none",
+              }} />
+          </div>
         </div>
 
         <div>
