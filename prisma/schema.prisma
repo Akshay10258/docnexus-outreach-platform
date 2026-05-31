@@ -34,6 +34,9 @@ model Campaign {
   name                 String
   type                 String
   status               String         @default("draft")
+  senderName           String?
+  senderTitle          String?
+  senderCompany        String?
   createdAt            DateTime       @default(now())
   enrolledPhysicianIds String
   sequences            SequenceStep[]
