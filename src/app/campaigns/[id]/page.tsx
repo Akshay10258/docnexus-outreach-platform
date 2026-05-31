@@ -78,6 +78,7 @@ export default function CampaignDashboardPage() {
         theme={theme} onThemeToggle={toggle}
         onBack={() => router.push("/campaigns")}
         onLaunch={handleLaunch}
+        onEdit={() => router.push(`/campaigns/${id}/edit`)}
       />
       <div style={{ padding: "28px", display: "flex", flexDirection: "column", gap: 20, maxWidth: 1100, margin: "0 auto" }}>
         <MetricsGrid metrics={mockMetrics} />

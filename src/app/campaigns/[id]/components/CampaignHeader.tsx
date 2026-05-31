@@ -8,9 +8,10 @@ interface Props {
     onThemeToggle: () => void;
     onBack: () => void;
     onLaunch: () => void;
+    onEdit: () => void;
 }
 
-export default function CampaignHeader({ campaign, launching, theme, onThemeToggle, onBack, onLaunch }: Props) {
+export default function CampaignHeader({ campaign, launching, theme, onThemeToggle, onBack, onLaunch, onEdit }: Props) {
     const statusColors = CAMPAIGN_STATUS_COLORS[campaign.status] ?? CAMPAIGN_STATUS_COLORS.draft;
 
     return (
@@ -59,6 +60,17 @@ export default function CampaignHeader({ campaign, launching, theme, onThemeTogg
 
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             {campaign.status === "draft" && (
+            <>
+            <button onClick={onEdit} style={{
+                padding: "7px 16px", fontSize: 14, fontWeight: 500,
+                background: "var(--color-background-secondary)",
+                color: "var(--color-text-secondary)",
+                border: "0.5px solid var(--color-border-secondary)",
+                borderRadius: "var(--border-radius-md)",
+                cursor: "pointer",
+            }}>
+                Edit
+            </button>
             <button onClick={onLaunch} disabled={launching} style={{
                 padding: "7px 16px", fontSize: 14, fontWeight: 500,
                 background: "#0F6E56", color: "white", border: "none",
@@ -67,6 +79,7 @@ export default function CampaignHeader({ campaign, launching, theme, onThemeTogg
             }}>
                 {launching ? "Launching..." : "Launch campaign →"}
             </button>
+            </>
             )}
             <button onClick={onThemeToggle} style={{
             width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center",

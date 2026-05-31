@@ -28,17 +28,17 @@ export const DEFAULT_SEQUENCES: SequenceStep[] = [
     {
         stepNumber: 1,
         delayDays: 0,
-        subjectTemplate: "Introduction from DocNexus — {{specialty}} Outreach",
+        subjectTemplate: "Connecting with {{specialty}} specialists at {{affiliation}}",
         bodyTemplate:
-        "Dear Dr. {{doctor_name}},\n\nI wanted to reach out regarding our latest insights relevant to {{specialty}} practitioners at {{affiliation}}.\n\nWould you be open to a brief conversation?\n\nBest regards,\nDocNexus Team",
+        "Dear Dr. {{doctor_name}},\n\nI hope this message finds you well. I'm reaching out because our team works closely with leading {{specialty}} practitioners, and I believe there's an opportunity worth discussing with your team at {{affiliation}}.\n\nWould you be open to a brief 15-minute call this week?\n\nBest regards,\n{{sender_name}}\n{{sender_title}}\n{{sender_company}}",
     },
     {
         stepNumber: 2,
         delayDays: 3,
-        subjectTemplate: "Following up — DocNexus for {{specialty}}",
+        subjectTemplate: "Following up — Clinical resources for {{specialty}}",
         bodyTemplate:
-        "Dear Dr. {{doctor_name}},\n\nJust following up on my previous message. I'd love to connect with you about how DocNexus can support your practice at {{affiliation}}.\n\nBest regards,\nDocNexus Team",
+        "Dear Dr. {{doctor_name}},\n\nI wanted to follow up on my previous message. I understand you're busy, so I'll keep this brief — we've been helping {{specialty}} teams at institutions like {{affiliation}} streamline their research and clinical workflows.\n\nWould a quick call work for you?\n\nBest regards,\n{{sender_name}}\n{{sender_title}}\n{{sender_company}}",
     },
 ];
 
-export const TEMPLATE_VARIABLES = ["{{doctor_name}}", "{{specialty}}", "{{affiliation}}", "{{city}}", "{{state}}"];
+export const TEMPLATE_VARIABLES = ["{{doctor_name}}", "{{specialty}}", "{{affiliation}}", "{{city}}", "{{state}}", "{{sender_name}}", "{{sender_title}}", "{{sender_company}}"];

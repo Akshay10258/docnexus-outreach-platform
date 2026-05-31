@@ -98,7 +98,7 @@ export default function PhysiciansPage() {
     const handleCampaignSuccess = (id: string) => {
         setShowSaveModal(false);
         setSelected(new Set());
-        router.push(`/campaigns/${id}`);
+        router.push(`/campaigns/${id}/edit`);
     };
 
     return (
