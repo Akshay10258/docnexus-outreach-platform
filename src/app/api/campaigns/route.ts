@@ -5,13 +5,16 @@ import { prisma } from "@/lib/prisma";
 export async function POST(req: NextRequest) {
     const body = await req.json();
 
-    const {name,type,enrolledPhysicianIds,sequences} = body;
+    const {name,type,enrolledPhysicianIds,sequences,senderName,senderTitle,senderCompany} = body;
 
     const campaign = await prisma.campaign.create({
         data:{
             name,
             type,
             status:"draft",
+            senderName,
+            senderTitle,
+            senderCompany,
             enrolledPhysicianIds:enrolledPhysicianIds.join(","),
             sequences:{
                 create: sequences.map((s:any,i:number) => ({

@@ -13,6 +13,9 @@ export interface Campaign {
     name: string;
     type: CampaignType;
     status: CampaignStatus;
+    senderName?: string;
+    senderTitle?: string;
+    senderCompany?: string;
     createdAt: string;
     sequences: SequenceStep[];
     enrolledPhysicianIds: string[];
