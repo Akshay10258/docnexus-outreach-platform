@@ -106,6 +106,8 @@ function StepEditor({ step, index, total, activeField, campaignName, campaignTyp
           campaignName: campaignName || "Healthcare Outreach",
           campaignType,
           stepNumber: index + 1,
+          currentSubject: step.subjectTemplate,
+          currentBody: step.bodyTemplate,
           physician: physician || {
             name: "Sarah Johnson",
             specialty: "Oncology",

@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        const { campaignName, campaignType, stepNumber, physician } = await req.json();
+        const { campaignName, campaignType, stepNumber, physician, currentSubject, currentBody } = await req.json();
 
         if (!campaignName || !campaignType || !stepNumber) {
             return NextResponse.json(
@@ -34,6 +34,10 @@ export async function POST(req: NextRequest) {
             - City: ${physician.city || "N/A"}`
                         : "";
 
+        const draftContext = (currentSubject || currentBody) 
+            ? `\nThe user has already started drafting this email. Use their current draft as the primary foundation for your generated email. Improve it to be professional, compelling, and compliant while retaining their core message:\nCurrent Subject Draft: ${currentSubject}\nCurrent Body Draft: ${currentBody}`
+            : "";
+
         const prompt = `You are an expert Medical Science Liaison (MSL) or Pharma Marketing Manager writing an outreach email to a physician.
 
             Generate a professional, compliant outreach email for the following campaign:
@@ -41,6 +45,7 @@ export async function POST(req: NextRequest) {
             - Campaign Type: ${typeLabel}
             - This is Step ${stepNumber} of the sequence${stepNumber > 1 ? " (a follow-up email sent if the physician did not reply to the previous step)" : " (the initial contact email)"}.
             ${physicianContext}
+            ${draftContext}
 
             IMPORTANT RULES:
             1. Use these exact template variables as placeholders for the recipient (do NOT replace them with real values):
