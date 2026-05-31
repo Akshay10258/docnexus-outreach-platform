@@ -123,6 +123,22 @@ function StepEditor({ step, index, total, activeField, campaignName, campaignTyp
       setGenerating(false);
     }
   };
+  
+  //validate the template variables so to prevent them from not getting resolved in the final mail
+  const checkVariables = (text: string) => {
+    const regex = /\{\{([^}]+)\}\}/g;
+    let match;
+    const invalidVars: string[] = [];
+    while ((match = regex.exec(text)) !== null) {
+      if (!TEMPLATE_VARIABLES.includes(`{{${match[1]}}}`)) {
+        invalidVars.push(match[0]);
+      }
+    }
+    return invalidVars;
+  };
+
+  const invalidSubjectVars = checkVariables(step.subjectTemplate);
+  const invalidBodyVars = checkVariables(step.bodyTemplate);
 
   return (
     <div style={{
@@ -186,6 +202,16 @@ function StepEditor({ step, index, total, activeField, campaignName, campaignTyp
               color: "var(--color-text-primary)", fontSize: 14,
               boxSizing: "border-box", outline: "none",
             }} />
+          {invalidSubjectVars.length > 0 && (
+            <p style={{ fontSize: 12, color: "#A32D2D", margin: "6px 0 0", fontWeight: 500, display: "flex", alignItems: "center", gap: 4 }}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="m10.29 3.86-7.5 13A2 2 0 0 0 4.5 20h15a2 2 0 0 0 1.71-3.14l-7.5-13a2 2 0 0 0-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+              Invalid variable(s): {invalidSubjectVars.join(", ")}
+            </p>
+          )}
         </div>
 
         <div>
@@ -203,6 +229,16 @@ function StepEditor({ step, index, total, activeField, campaignName, campaignTyp
               boxSizing: "border-box", resize: "vertical",
               fontFamily: "var(--font-sans)", lineHeight: 1.6, outline: "none",
             }} />
+          {invalidBodyVars.length > 0 && (
+            <p style={{ fontSize: 12, color: "#A32D2D", margin: "6px 0 0", fontWeight: 500, display: "flex", alignItems: "center", gap: 4 }}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="m10.29 3.86-7.5 13A2 2 0 0 0 4.5 20h15a2 2 0 0 0 1.71-3.14l-7.5-13a2 2 0 0 0-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+              Invalid variable(s): {invalidBodyVars.join(", ")}
+            </p>
+          )}
         </div>
 
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8 }}>
