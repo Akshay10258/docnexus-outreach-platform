@@ -37,12 +37,12 @@ export default function CampaignForm({
             placeholder="e.g. Q3 Oncology Northeast Outreach"
             style={{
               width: "100%", padding: "9px 12px", borderRadius: "var(--border-radius-md)",
-              border: `0.5px solid ${error ? "#E24B4A" : "var(--color-border-secondary)"}`,
+              border: `0.5px solid ${error === "Campaign name is required" ? "#E24B4A" : "var(--color-border-secondary)"}`,
               background: "var(--color-background-secondary)",
               color: "var(--color-text-primary)", fontSize: 14,
               boxSizing: "border-box", outline: "none",
             }} />
-          {error && <p style={{ fontSize: 12, color: "#E24B4A", margin: "4px 0 0" }}>{error}</p>}
+          {error === "Campaign name is required" && <p style={{ fontSize: 12, color: "#E24B4A", margin: "4px 0 0" }}>{error}</p>}
         </div>
 
         <div style={{ display: "flex", gap: 12 }}>
@@ -53,11 +53,12 @@ export default function CampaignForm({
               placeholder="e.g. Akshay Achar"
               style={{
                 width: "100%", padding: "9px 12px", borderRadius: "var(--border-radius-md)",
-                border: "0.5px solid var(--color-border-secondary)",
+                border: `0.5px solid ${error === "Sender name is required" ? "#E24B4A" : "var(--color-border-secondary)"}`,
                 background: "var(--color-background-secondary)",
                 color: "var(--color-text-primary)", fontSize: 14,
                 boxSizing: "border-box", outline: "none",
               }} />
+            {error === "Sender name is required" && <p style={{ fontSize: 12, color: "#E24B4A", margin: "4px 0 0" }}>{error}</p>}
           </div>
           <div style={{ flex: 1 }}>
             <label style={labelStyle}>YOUR TITLE</label>
@@ -66,11 +67,12 @@ export default function CampaignForm({
               placeholder="e.g. Medical Science Liaison"
               style={{
                 width: "100%", padding: "9px 12px", borderRadius: "var(--border-radius-md)",
-                border: "0.5px solid var(--color-border-secondary)",
+                border: `0.5px solid ${error === "Sender title is required" ? "#E24B4A" : "var(--color-border-secondary)"}`,
                 background: "var(--color-background-secondary)",
                 color: "var(--color-text-primary)", fontSize: 14,
                 boxSizing: "border-box", outline: "none",
               }} />
+            {error === "Sender title is required" && <p style={{ fontSize: 12, color: "#E24B4A", margin: "4px 0 0" }}>{error}</p>}
           </div>
           <div style={{ flex: 1 }}>
             <label style={labelStyle}>YOUR COMPANY</label>
@@ -79,11 +81,12 @@ export default function CampaignForm({
               placeholder="e.g. Pfizer"
               style={{
                 width: "100%", padding: "9px 12px", borderRadius: "var(--border-radius-md)",
-                border: "0.5px solid var(--color-border-secondary)",
+                border: `0.5px solid ${error === "Sender company is required" ? "#E24B4A" : "var(--color-border-secondary)"}`,
                 background: "var(--color-background-secondary)",
                 color: "var(--color-text-primary)", fontSize: 14,
                 boxSizing: "border-box", outline: "none",
               }} />
+            {error === "Sender company is required" && <p style={{ fontSize: 12, color: "#E24B4A", margin: "4px 0 0" }}>{error}</p>}
           </div>
         </div>
 

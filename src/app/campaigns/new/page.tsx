@@ -79,6 +79,9 @@ export default function NewCampaignPage() {
 
     const handleSave = async (launch: boolean) => {
         if (!name.trim()) { setError("Campaign name is required"); return; }
+        if (!senderName.trim()) { setError("Sender name is required"); return; }
+        if (!senderTitle.trim()) { setError("Sender title is required"); return; }
+        if (!senderCompany.trim()) { setError("Sender company is required"); return; }
         setSaving(true);
         setError("");
         try {
@@ -150,9 +153,9 @@ export default function NewCampaignPage() {
                 senderName={senderName} senderTitle={senderTitle} senderCompany={senderCompany}
                 onNameChange={(v) => { setName(v); setError(""); }}
                 onTypeChange={setType}
-                onSenderNameChange={setSenderName}
-                onSenderTitleChange={setSenderTitle}
-                onSenderCompanyChange={setSenderCompany}
+                onSenderNameChange={(v) => { setSenderName(v); setError(""); }}
+                onSenderTitleChange={(v) => { setSenderTitle(v); setError(""); }}
+                onSenderCompanyChange={(v) => { setSenderCompany(v); setError(""); }}
             />
 
             <PhysicianEnrollmentSection
@@ -170,7 +173,13 @@ export default function NewCampaignPage() {
                 onStepChange={updateStep} onAddStep={addStep}
                 onRemoveStep={removeStep} onActiveFieldChange={setActiveField}
             />
-            <div style={{ display: "flex", gap: 10, paddingBottom: 28 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, paddingBottom: 28 }}>
+                {error && (
+                    <div style={{ padding: "10px 14px", background: "#FDE8E8", border: "0.5px solid #F9C9C9", borderRadius: "var(--border-radius-md)", color: "#A32D2D", fontSize: 13, fontWeight: 500, display: "flex", alignItems: "center", gap: 8 }}>
+                        ⚠️ Please fix the following error before saving: {error}
+                    </div>
+                )}
+                <div style={{ display: "flex", gap: 10 }}>
                 <button onClick={() => handleSave(false)} disabled={saving} style={{
                 flex: 1, padding: "10px", borderRadius: "var(--border-radius-md)",
                 border: "0.5px solid var(--color-border-secondary)",
@@ -189,6 +198,7 @@ export default function NewCampaignPage() {
                 }}>
                 {saving ? "Saving..." : "Launch campaign →"}
                 </button>
+                </div>
             </div>
             </div>
         </div>
