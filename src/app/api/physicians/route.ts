@@ -19,25 +19,40 @@ export async function GET(req: NextRequest) {
         },
     });
 
-    // Fetch active campaigns to map enrollment
+    // Fetch all campaigns to map enrollment and history
     const campaigns = await prisma.campaign.findMany({
-        where: { status: "active" },
-        select: { enrolledPhysicianIds: true },
+        select: { id: true, name: true, status: true, enrolledPhysicianIds: true, createdAt: true },
+        orderBy: { createdAt: 'desc' }
     });
 
-    // Build a map of physicianId -> count of active campaigns
+    // Build maps of physicianId -> count and history
     const enrollmentCounts: Record<string, number> = {};
+    const histories: Record<string, { id: string; name: string; status: string; date: string }[]> = {};
+
     campaigns.forEach((c) => {
         if (!c.enrolledPhysicianIds) return;
-        const ids = c.enrolledPhysicianIds.split(",");
+        const ids = c.enrolledPhysicianIds.split(",").map(id => id.trim());
         ids.forEach((id) => {
-            enrollmentCounts[id] = (enrollmentCounts[id] || 0) + 1;
+            if (!id) return;
+            // Count active ones
+            if (c.status === "active") {
+                enrollmentCounts[id] = (enrollmentCounts[id] || 0) + 1;
+            }
+            // Add to history
+            if (!histories[id]) histories[id] = [];
+            histories[id].push({
+                id: c.id,
+                name: c.name,
+                status: c.status,
+                date: c.createdAt.toISOString()
+            });
         });
     });
 
     const physiciansWithCounts = physicians.map((p) => ({
         ...p,
         activeCampaignCount: enrollmentCounts[p.id] || 0,
+        history: histories[p.id] || [],
     }));
 
     return NextResponse.json(physiciansWithCounts);

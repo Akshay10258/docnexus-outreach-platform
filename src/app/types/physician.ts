@@ -13,6 +13,7 @@ export interface Physician {
     acceptingPatients: boolean;
     boardCertified: boolean;
     activeCampaignCount?: number;
+    history?: { id: string; name: string; status: string; date: string }[];
 }
 
 export interface PhysicianFilters {

@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import { getSpecialtyColors, getInitials, getExperience } from "@/app/constants/physician";
 import type { Physician } from "@/app/types/physician";
 
@@ -9,24 +9,29 @@ interface Props {
 }
 
 function PhysicianCard({ physician: p, isSelected, onToggle }: Props) {
+    const [showHistory, setShowHistory] = useState(false);
     const { color, bg } = getSpecialtyColors(p.specialty);
     const exp = getExperience(p.npiRegistrationYear);
     const initials = getInitials(p.firstName, p.lastName);
+    const hasHistory = p.history && p.history.length > 0;
 
     return (
-        <div
-        role="row" aria-selected={isSelected}
-        onClick={() => onToggle(p.id)}
-        style={{
-            display: "flex", alignItems: "center", gap: 16, padding: "14px 18px",
+        <div style={{
             background: "var(--color-background-primary)",
             borderRadius: "var(--border-radius-lg)",
             border: `0.5px solid ${isSelected ? "#1D9E75" : "var(--color-border-tertiary)"}`,
-            cursor: "pointer",
             boxShadow: isSelected ? "0 0 0 2px #E1F5EE" : "none",
             transition: "border-color 0.15s, box-shadow 0.15s",
-        }}
-        >
+            overflow: "hidden"
+        }}>
+            <div
+            role="row" aria-selected={isSelected}
+            onClick={() => onToggle(p.id)}
+            style={{
+                display: "flex", alignItems: "center", gap: 16, padding: "14px 18px",
+                cursor: "pointer",
+            }}
+            >
         <input type="checkbox" checked={isSelected}
             onChange={() => onToggle(p.id)} onClick={(e) => e.stopPropagation()}
             aria-label={`Select Dr. ${p.firstName} ${p.lastName}`}
@@ -81,6 +86,67 @@ function PhysicianCard({ physician: p, isSelected, onToggle }: Props) {
             <p style={{ fontSize: 13, fontWeight: 500, color: "var(--color-text-secondary)",
             margin: "2px 0 0", fontFamily: "var(--font-mono)" }}>{p.npi}</p>
         </div>
+
+        <div style={{ borderLeft: "0.5px solid var(--color-border-tertiary)", paddingLeft: 16, display: "flex", alignItems: "center" }}>
+            <button onClick={(e) => { e.stopPropagation(); setShowHistory(!showHistory); }} style={{
+                border: "none", cursor: "pointer", padding: "6px 12px",
+                borderRadius: "var(--border-radius-sm)", color: showHistory ? "#0F6E56" : "var(--color-text-secondary)",
+                fontSize: 12, fontWeight: 500, display: "flex", alignItems: "center", gap: 6,
+                background: showHistory ? "#E1F5EE" : "var(--color-background-secondary)",
+            }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 6v6l4 2" />
+                </svg>
+                History {hasHistory ? `(${p.history!.length})` : ""}
+            </button>
+        </div>
+        </div>
+
+        {/* History Dropdown Section */}
+        {showHistory && (
+            <div style={{
+                borderTop: "0.5px solid var(--color-border-tertiary)",
+                background: "var(--color-background-secondary)",
+                padding: "16px 24px",
+            }}>
+                <h4 style={{ fontSize: 13, fontWeight: 600, color: "var(--color-text-primary)", margin: "0 0 12px 0" }}>
+                    Campaign Engagement History
+                </h4>
+                
+                {hasHistory ? (
+                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                        {p.history!.map((campaign) => (
+                            <div key={campaign.id} style={{
+                                display: "flex", alignItems: "center", justifyContent: "space-between",
+                                padding: "10px 14px", background: "var(--color-background-primary)",
+                                borderRadius: "var(--border-radius-md)", border: "0.5px solid var(--color-border-tertiary)"
+                            }}>
+                                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                                    <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 99,
+                                        background: campaign.status === 'completed' ? '#E1F5EE' : campaign.status === 'active' ? '#E6F0FD' : '#F3F4F6',
+                                        color: campaign.status === 'completed' ? '#0F6E56' : campaign.status === 'active' ? '#1D4ED8' : '#6B7280',
+                                        textTransform: "uppercase"
+                                    }}>
+                                        {campaign.status}
+                                    </span>
+                                    <span style={{ fontSize: 13, fontWeight: 500, color: "var(--color-text-primary)" }}>
+                                        {campaign.name}
+                                    </span>
+                                </div>
+                                <span style={{ fontSize: 12, color: "var(--color-text-tertiary)" }}>
+                                    {new Date(campaign.date).toLocaleDateString()}
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <p style={{ fontSize: 13, color: "var(--color-text-tertiary)", margin: 0 }}>
+                        No past campaign interactions found for this physician.
+                    </p>
+                )}
+            </div>
+        )}
         </div>
     );
 }
