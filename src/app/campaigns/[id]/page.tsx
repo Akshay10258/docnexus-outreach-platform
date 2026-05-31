@@ -102,12 +102,16 @@ export default function CampaignDashboardPage() {
 
 function LoadingScreen() {
   return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "center",
-      height: "100vh", background: "var(--color-background-tertiary)", fontFamily: "var(--font-sans)" }}>
+    <div style={{
+      display: "flex", alignItems: "center", justifyContent: "center",
+      height: "100vh", background: "var(--color-background-tertiary)", fontFamily: "var(--font-sans)"
+    }}>
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
-        <div style={{ width: 32, height: 32, borderRadius: "50%",
+        <div style={{
+          width: 32, height: 32, borderRadius: "50%",
           border: "2px solid #E1F5EE", borderTop: "2px solid #0F6E56",
-          animation: "spin 0.8s linear infinite" }} />
+          animation: "spin 0.8s linear infinite"
+        }} />
         <span style={{ fontSize: 14, color: "var(--color-text-tertiary)" }}>Loading campaign...</span>
       </div>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>

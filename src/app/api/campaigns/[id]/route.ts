@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 export async function GET(
     req: NextRequest,
     context: { params: Promise<{ id: string }> }
-    ) {
+) {
     const { id } = await context.params;
     const campaign = await prisma.campaign.findUnique({
         where: { id },
@@ -19,8 +19,8 @@ export async function GET(
     return NextResponse.json({
         ...campaign,
         enrolledPhysicianIds: campaign.enrolledPhysicianIds
-        ? campaign.enrolledPhysicianIds.split(",")
-        : [],
+            ? campaign.enrolledPhysicianIds.split(",")
+            : [],
     });
 }
 
@@ -32,7 +32,7 @@ export async function PUT(
     try {
         const { id } = await context.params;
         const body = await req.json();
-        const { name, type, sequences, senderName, senderTitle, senderCompany } = body;
+        const { name, type, sequences, senderName, senderTitle, senderCompany, enrolledPhysicianIds } = body;
 
         // Input validation
         if (!name || !type) {
@@ -59,6 +59,9 @@ export async function PUT(
                 senderName,
                 senderTitle,
                 senderCompany,
+                ...(enrolledPhysicianIds !== undefined && { 
+                    enrolledPhysicianIds: Array.isArray(enrolledPhysicianIds) ? enrolledPhysicianIds.join(",") : enrolledPhysicianIds
+                }),
                 sequences: {
                     create: sequences.map((s: any, i: number) => ({
                         stepNumber: i + 1,
