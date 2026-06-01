@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { SPECIALTIES, STATES, AFFILIATIONS } from "@/app/constants/physician";
 
 interface Props {
     specialty: string; state: string; minYear: string; affiliation: string;
     acceptingOnly: boolean; boardOnly: boolean; hasFilters: boolean;
+    specialtyOptions: string[]; stateOptions: string[]; affiliationOptions: string[];
     onSpecialtyChange: (v: string) => void;
     onStateChange: (v: string) => void;
     onAffiliationChange: (v: string) => void;
@@ -21,6 +21,7 @@ const NAV = [
 
 export default function PhysicianSidebar({
     specialty, state, minYear, affiliation, acceptingOnly, boardOnly, hasFilters,
+    specialtyOptions, stateOptions, affiliationOptions,
     onSpecialtyChange, onStateChange, onAffiliationChange, onMinYearChange,
     onAcceptingChange, onBoardChange, onClearFilters,
     }: Props) {
@@ -76,9 +77,9 @@ export default function PhysicianSidebar({
             )}
             </div>
 
-            <FilterSelect label="SPECIALTY" value={specialty} options={SPECIALTIES} onChange={onSpecialtyChange} />
-            <FilterSelect label="STATE" value={state} options={STATES} onChange={onStateChange} />
-            <FilterSelect label="AFFILIATION" value={affiliation} options={AFFILIATIONS} onChange={onAffiliationChange} />
+            <FilterSelect label="SPECIALTY" value={specialty} options={specialtyOptions} onChange={onSpecialtyChange} />
+            <FilterSelect label="STATE" value={state} options={stateOptions} onChange={onStateChange} />
+            <FilterSelect label="AFFILIATION" value={affiliation} options={affiliationOptions} onChange={onAffiliationChange} />
 
             <div style={{ marginBottom: 16 }}>
             <label style={labelStyle}>NPI REGISTERED AFTER</label>

@@ -17,6 +17,7 @@ export default function PhysiciansPage() {
     const [physicians, setPhysicians] = useState<Physician[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [filterOptions, setFilterOptions] = useState({ specialties: ["All Specialties"], states: ["All States"], affiliations: ["All Affiliations"] });
 
     // server-side filter params (trigger refetch)
     const [specialty, setSpecialty] = useState("All Specialties");
@@ -57,6 +58,16 @@ export default function PhysiciansPage() {
     }, [specialty, state, affiliation, minYear]);
 
     useEffect(() => { fetchPhysicians(); }, [fetchPhysicians]);
+
+    // fetch dynamic filter options exactly once
+    useEffect(() => {
+        fetch("/api/physicians/filters")
+            .then(res => res.json())
+            .then(data => {
+                if (data.specialties) setFilterOptions(data);
+            })
+            .catch(console.error);
+    }, []);
 
     // client-side filtering (search + checkboxes)
     const filtered = physicians.filter((p) => {
@@ -107,6 +118,9 @@ export default function PhysiciansPage() {
             specialty={specialty} state={state} minYear={minYear} affiliation={affiliation}
             acceptingOnly={acceptingOnly} boardOnly={boardOnly}
             hasFilters={hasFilters}
+            specialtyOptions={filterOptions.specialties}
+            stateOptions={filterOptions.states}
+            affiliationOptions={filterOptions.affiliations}
             onSpecialtyChange={setSpecialty} onStateChange={setState} onAffiliationChange={setAffiliation}
             onMinYearChange={setMinYear} onAcceptingChange={setAcceptingOnly}
             onBoardChange={setBoardOnly} onClearFilters={clearFilters}
