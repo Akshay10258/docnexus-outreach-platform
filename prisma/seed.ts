@@ -4,6 +4,9 @@ const prisma = new PrismaClient();
 
 async function main() {
   await prisma.physician.deleteMany();
+  await prisma.campaign.deleteMany();
+
+  // 1. Create Physicians
 
   await prisma.physician.createMany({
     data: [
@@ -291,6 +294,76 @@ async function main() {
   });
 
   console.log("Seeded physicians");
+
+  // 2. Create Realistic Campaigns for Demo
+
+  // Find some Oncology physicians for the active campaign
+  const oncologyDocs = await prisma.physician.findMany({
+    where: { specialty: "Oncology" },
+    select: { id: true },
+    take: 5
+  });
+
+  // Find some Cardiology physicians for the draft campaign
+  const cardiologyDocs = await prisma.physician.findMany({
+    where: { specialty: "Cardiology" },
+    select: { id: true },
+    take: 3
+  });
+
+  await prisma.campaign.create({
+    data: {
+      name: "Q3 Oncology Clinical Trial Outreach",
+      type: "cold_outbound",
+      status: "active",
+      senderName: "Sarah Jenkins",
+      senderTitle: "Medical Science Liaison",
+      senderCompany: "Novartis",
+      createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
+      enrolledPhysicianIds: oncologyDocs.map(d => d.id).join(","),
+      sequences: {
+        create: [
+          {
+            stepNumber: 1,
+            delayDays: 0,
+            subjectTemplate: "Clinical trial opportunities for {{specialty}} patients at {{affiliation}}",
+            bodyTemplate: "Dear Dr. {{doctor_name}},\n\nI am reaching out because of your extensive work in oncology at {{affiliation}}. We are currently enrolling for a Phase 3 trial that aligns closely with your clinical focus.\n\nWould you be open to a brief 5-minute call next week to discuss if this would benefit your patients?\n\nBest regards,\n{{sender_name}}\n{{sender_title}}\n{{sender_company}}"
+          },
+          {
+            stepNumber: 2,
+            delayDays: 4,
+            subjectTemplate: "Following up: Clinical trial resources for {{specialty}}",
+            bodyTemplate: "Dear Dr. {{doctor_name}},\n\nI know how busy things are at {{affiliation}}. I just wanted to float this to the top of your inbox.\n\nAre you still open to discussing the trial parameters?\n\nBest regards,\n{{sender_name}}\n{{sender_title}}\n{{sender_company}}"
+          }
+        ]
+      }
+    }
+  });
+
+  await prisma.campaign.create({
+    data: {
+      name: "Q4 Cardiology Re-engagement",
+      type: "reengagement",
+      status: "draft",
+      senderName: "Sarah Jenkins",
+      senderTitle: "Medical Science Liaison",
+      senderCompany: "Novartis",
+      createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
+      enrolledPhysicianIds: cardiologyDocs.map(d => d.id).join(","),
+      sequences: {
+        create: [
+          {
+            stepNumber: 1,
+            delayDays: 0,
+            subjectTemplate: "Reconnecting regarding new cardiovascular therapies",
+            bodyTemplate: "Dear Dr. {{doctor_name}},\n\nIt's been a while since we last connected. I wanted to share some recent data regarding our new cardiovascular therapies that might be relevant to your work at {{affiliation}}.\n\nBest regards,\n{{sender_name}}\n{{sender_title}}\n{{sender_company}}"
+          }
+        ]
+      }
+    }
+  });
+
+  console.log("Seeded realistic demo campaigns");
 }
 
 main()
