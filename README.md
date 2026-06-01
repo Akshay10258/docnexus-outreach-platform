@@ -2,6 +2,10 @@
 
 [Live Web App (Vercel)](https://akshay10258-docnexus-outreach-platf.vercel.app) | [Video Walkthrough Demo](https://drive.google.com/drive/folders/1xEmbvr0J5bRrSpKgaNCh4ioL8yIMueRO?usp=sharing)
 
+> [!WARNING]
+> **Important Note on Live Deployment Data Persistence**
+> The live Vercel deployment is for visual preview purposes only. Because this MVP utilizes a lightweight **SQLite** database for maximum portability and ease of setup, Vercel's ephemeral Serverless Functions will occasionally wipe newly created data (such as new campaigns) as instances spin up and down. **To test full end-to-end data persistence and mutations, please run the application locally.**
+
 A lightweight, full-stack physician outreach and campaign management platform built for the DocNexus Engineering Internship take-home assignment.
 
 ## 🚀 Features
